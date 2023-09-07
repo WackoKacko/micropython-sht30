@@ -36,18 +36,12 @@ class SHT30():
     ENABLE_HEATER_CMD = b'\x30\x6D'
     DISABLE_HEATER_CMD = b'\x30\x66'
 
-    def __init__(self, scl_pin=22, sda_pin=21, delta_temp = 0, delta_hum = 0, i2c_address=DEFAULT_I2C_ADDRESS):
+    def __init__(self, i2c, delta_temp = 0, delta_hum = 0, i2c_address=DEFAULT_I2C_ADDRESS):
         self.i2c = I2C(0, scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000)
         self.i2c_addr = i2c_address
         self.set_delta(delta_temp, delta_hum)
         time.sleep_ms(50)
-    
-    def init(self, scl_pin=22, sda_pin=21):
-        """
-        Init the I2C bus using the new pin values
-        """
-        self.i2c.init(scl=Pin(scl_pin), sda=Pin(sda_pin))
-    
+
     def is_present(self):
         """
         Return true if the sensor is correctly conneced, False otherwise
