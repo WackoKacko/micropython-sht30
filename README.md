@@ -1,4 +1,4 @@
-#MicroPython driver for the amazing SHT30 temperature and humidity sensor 
+# MicroPython driver for the amazing SHT30 temperature and humidity sensor 
 
 So I made this because the original repo wouldn't run. There are/were some Python functions in there that didn't work in MicroPython. It now runs successfully (on an ESP32 WROOM). 
 
