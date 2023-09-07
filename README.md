@@ -10,5 +10,5 @@ I've been developing in Pymakr on VSCode. It's pretty neat, I recommend it, desp
 
 * [Sensor Datasheet](https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/2_Humidity_Sensors/Sensirion_Humidity_Sensors_SHT3x_Datasheet_digital.pdf)  
 
-_"Ahoy!"_ 
-_-Popeye The Sailor
+_"Ahoy!"_ \
+_-Popeye The Sailor_
