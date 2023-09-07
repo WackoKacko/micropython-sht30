@@ -6,7 +6,7 @@ __author__ = 'Roberto Sánchez'
 __license__ = "Apache License 2.0. https://www.apache.org/licenses/LICENSE-2.0"
 
 # I2C address B 0x45 ADDR (pin 2) connected to VDD
-DEFAULT_I2C_ADDRESS = 0x45
+DEFAULT_I2C_ADDRESS = 0x44
 
 class SHT30():
     """
@@ -29,20 +29,20 @@ class SHT30():
     WRITE_STATUS_MASK = 0x0001	# 0
 
     # MSB = 0x2C LSB = 0x06 Repeatability = High, Clock stretching = enabled
-    MEASURE_CMD = b'\x2C\x10'
+    MEASURE_CMD = b'\x2C\x06' #changed from x10 to x06
     STATUS_CMD = b'\xF3\x2D'
     RESET_CMD = b'\x30\xA2'
     CLEAR_STATUS_CMD = b'\x30\x41'
     ENABLE_HEATER_CMD = b'\x30\x6D'
     DISABLE_HEATER_CMD = b'\x30\x66'
 
-    def __init__(self, scl_pin=5, sda_pin=4, delta_temp = 0, delta_hum = 0, i2c_address=DEFAULT_I2C_ADDRESS):
-        self.i2c = I2C(scl=Pin(scl_pin), sda=Pin(sda_pin))
+    def __init__(self, scl_pin=22, sda_pin=21, delta_temp = 0, delta_hum = 0, i2c_address=DEFAULT_I2C_ADDRESS):
+        self.i2c = I2C(0, scl=Pin(scl_pin), sda=Pin(sda_pin), freq=100000)
         self.i2c_addr = i2c_address
         self.set_delta(delta_temp, delta_hum)
         time.sleep_ms(50)
     
-    def init(self, scl_pin=5, sda_pin=4):
+    def init(self, scl_pin=22, sda_pin=21):
         """
         Init the I2C bus using the new pin values
         """
@@ -78,28 +78,30 @@ class SHT30():
     
     def send_cmd(self, cmd_request, response_size=6, read_delay_ms=100):
         """
-        Send a command to the sensor and read (optionally) the response
-        The responsed data is validated by CRC
+        Send a command to the sensor and read (optionally) the response.
+        The responsed data is validated by CRC.
         """
         try:
-            self.i2c.start(); 
-            self.i2c.writeto(self.i2c_addr, cmd_request); 
+            self.i2c.writeto(self.i2c_addr, cmd_request)
             if not response_size:
-                self.i2c.stop(); 	
                 return
+
             time.sleep_ms(read_delay_ms)
-            data = self.i2c.readfrom(self.i2c_addr, response_size) 
-            self.i2c.stop(); 
-            for i in range(response_size//3):
-                if not self._check_crc(data[i*3:(i+1)*3]): # pos 2 and 5 are CRC
+            data = self.i2c.readfrom(self.i2c_addr, response_size)
+
+            for i in range(response_size // 3):
+                if not self._check_crc(data[i * 3: (i + 1) * 3]):  # pos 2 and 5 are CRC
                     raise SHT30Error(SHT30Error.CRC_ERROR)
+
             if data == bytearray(response_size):
                 raise SHT30Error(SHT30Error.DATA_ERROR)
+
             return data
         except OSError as ex:
-            if 'I2C' in ex.args[0]:
+            if "I2C" in str(ex):
                 raise SHT30Error(SHT30Error.BUS_ERROR)
             raise ex
+
 
     def clear_status(self):
         """
