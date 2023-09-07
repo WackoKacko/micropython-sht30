@@ -1,7 +1,9 @@
 from sht30 import SHT30
 import utime
+from machine import I2C, Pin
 
-sensor = SHT30()
+i2c = I2C(scl=Pin(22), sda=Pin(21), freq=100000)
+sensor = SHT30(i2c)
 
 if sensor.is_present():
     print("Sensor is present!")
